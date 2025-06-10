@@ -5,7 +5,7 @@
 #re
 
 NAME = get_next_line.a
-FLAGS = -Wall -Wextra -Werror #-D BUFFER_SIZE=42
+FLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=n
 CC = cc
 
 OBJS = $(SRC:.c=.o)

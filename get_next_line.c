@@ -6,7 +6,7 @@
 /*   By: dponte <dponte@student.codam.nl>            +#+                      */
 /*                                                  +#+                       */
 /*   Created: 2025/06/08 16:07:35 by dponte       #+#    #+#                  */
-/*   Updated: 2025/06/10 18:32:35 by dponte       ########   odam.nl          */
+/*   Updated: 2025/06/10 18:37:37 by dponte       ########   odam.nl          */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ char	*get_next_line(int fd)
 	byte_count = read(fd, buffer, BUFFER_SIZE - 1);
 	if (byte_count == 0)
 	{
+		// TODO:
 		free(buffer);
 		free(stash);
 		return (NULL);
@@ -33,6 +34,7 @@ char	*get_next_line(int fd)
 	printf("%ld\n", read(fd, buffer, BUFFER_SIZE - 1));
 	ft_strlcpy(stash, buffer, 1000);
 	printf("stash:%s\n", stash);
+	//TODO
 	free(buffer);
 	return (stash);
 }

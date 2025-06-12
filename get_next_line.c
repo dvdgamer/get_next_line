@@ -21,21 +21,38 @@ char	*get_next_line(int fd)
 	char		*buffer;
 	static char	*stash;
 
-	stash = malloc(1000 * sizeof(char));
+	//TODO: dynamic allocation to stash? Double it if no \n before filling stash?
+	stash = calloc(100000, sizeof(char));
 	buffer = calloc(BUFFER_SIZE, sizeof(char));
 	byte_count = read(fd, buffer, BUFFER_SIZE - 1);
 	if (byte_count == 0)
 	{
-		// TODO:
 		free(buffer);
 		free(stash);
 		return (NULL);
 	}
-	printf("%ld\n", read(fd, buffer, BUFFER_SIZE - 1));
-	ft_strlcpy(stash, buffer, 1000);
 	printf("stash:%s\n", stash);
-	//TODO
+	printf("buffer:%s\n", buffer);
 	free(buffer);
 	return (stash);
 }
 
+int	add_line_to_tmp(char *buffer, char *tmp ,size_t size)
+{
+	size_t	i;
+	int		ready_to_print;
+
+	ready_to_print = 0;
+	i = 0;
+	while (i < size && buffer[i] != '\0')
+	{
+		if (buffer[i] == '\n')
+		{
+			//TODO: print this line including '\n'
+			// print tmp;
+			free (tmp);
+			return 1;
+		}
+	}
+	return 0;
+}

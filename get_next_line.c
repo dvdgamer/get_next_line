@@ -21,7 +21,7 @@ char	*get_next_line(int fd)
 	static size_t	byte_count;
 	char			*buffer;
 	char			*tmp;
-	char			*stash;
+	static char		*stash;
 
 	buffer = calloc(BUFFER_SIZE + 1, sizeof(char));
 	tmp = calloc(BUFFER_SIZE + 1, sizeof(char));

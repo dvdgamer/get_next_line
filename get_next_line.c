@@ -17,17 +17,21 @@
 
 char	*get_next_line(int fd)
 {
-	char			*is_line_break;
-	static size_t	byte_count;
-	char			*buffer;
 	char			*tmp;
+	char			*buffer;
+	char			*line_break;
 	static char		*stash;
+	static size_t	byte_count;
 
 	buffer = calloc(BUFFER_SIZE + 1, sizeof(char));
-	tmp = calloc(BUFFER_SIZE + 1, sizeof(char));
+
+	line_break = ft_strchr(buffer, '\n');
+	printf("line_break:%s\n", line_break);
+
 	stash = ft_strdup("");
+
 	byte_count = read(fd, buffer, BUFFER_SIZE);
-	printf("buffer:%s\n", buffer);
+	/* printf("buffer:%s\n", buffer); */
 	if (byte_count == 0)
 	{
 		free(buffer);
@@ -35,22 +39,17 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 
-	//TODO:while no \n keep reading the file
-
-	if (ft_strchr(buffer, '\n') == NULL)
+	while (line_break == NULL)
 	{
-		// add the these lines to the stash
-		get_next_line(fd);
 		stash = ft_strjoin(stash, buffer);
-		printf("stash:%s\n", stash);
+		read(fd, buffer, BUFFER_SIZE);
+		line_break = ft_strchr(buffer, '\n');
+		printf("stash1:%s\n", stash);
 	}
-	else
-	{
-		printf("\\n found!\n");
-		printf("stash:%s\n", stash);
-		return (stash);
-	}
-	// finally returning the string
-	/* tmp = ft_strjoin(stash, buffer); */
+	ft_strplit()
+	stash = line_break + 1;
+	printf("line_break:%s\n", line_break);
+	printf("\\n found!\n");
+	printf("stash2:%s\n", stash);
 	return (stash);
 }

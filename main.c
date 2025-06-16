@@ -16,7 +16,7 @@ int main(void)
 		if (next_line == NULL)
 			break ;
 		count++;
-		printf("------------------------");
+		printf("------------------------\n");
 		printf("[%d]:%s\n", count, next_line);
 		next_line = NULL;
 	}

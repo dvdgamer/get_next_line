@@ -4,9 +4,9 @@
 
 int main(void)
 {
-	int    fd;
-	char  *next_line;
-	int  count;
+	int		fd;
+	char	*next_line;
+	int		count;
 
 	count = 0;
 	fd = open("test.txt", O_RDONLY);
@@ -16,6 +16,7 @@ int main(void)
 		if (next_line == NULL)
 			break ;
 		count++;
+		printf("------------------------");
 		printf("[%d]:%s\n", count, next_line);
 		next_line = NULL;
 	}

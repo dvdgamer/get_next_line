@@ -3,3 +3,5 @@ main.c
 a.out
 
 test*
+
+Makefile

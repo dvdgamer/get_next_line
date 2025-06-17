@@ -12,52 +12,96 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include "get_next_line.h"
 
 char	*get_next_line(int fd)
 {
 	char			*buffer;
-	static char		*newline;
+	static char		*line_break;
 	static char		*stash;
-	static size_t	byte_count;
+	size_t 			len;
+	char		*tmp;
+	size_t	byte_count;
 
 	buffer = calloc(BUFFER_SIZE + 1, sizeof(char));
+	tmp = calloc(BUFFER_SIZE + 1, sizeof(char));
 
-	if (newline != NULL)
-		stash = newline + 1;
-	else
+	if (stash == NULL)
 		stash = ft_strdup("");
-
-	/* printf("newline:%s\n", new_line); */
-	newline = ft_strchr(buffer, '\n');
+	else
+	{
+		if (ft_strchr(stash, '\n'))
+		{
+			line_break = ft_strchr(stash, '\n');
+			printf("line_break1:%s\n", line_break + 1);
+			len = line_break - buffer;
+			printf("len:%ld\n", len);
+			tmp = ft_substr(buffer, 0, len);
+			printf("tmp1:%s\n", tmp);
+			stash = line_break + 1;
+			return (tmp);
+		}
+	}
 
 	byte_count = read(fd, buffer, BUFFER_SIZE);
 	if (byte_count == 0)
 	{
+		stash = ft_strjoin(stash, buffer);
 		free(buffer);
-		free(stash);
-		free(newline);
-		stash = NULL;
+		free(tmp);
 		return (stash);
 	}
 
-	while (newline == NULL)
+	line_break = ft_strchr(buffer, '\n');
+	printf("\nbuffer:%s\n", buffer);
+
+	if (line_break)
 	{
-		read(fd, buffer, BUFFER_SIZE);
-		newline = ft_strchr(buffer, '\n');
-		if (newline != NULL)
-			stash = ft_strjoin(stash, buffer);
-		else
-		{
-			// TODO: Add to stash only until the line break
-			size_t chars_before_newline = &newline - &buffer;
-			printf("pointer:%ld\n", chars_before_newline);
-			/* stash = ft_strjoin(stash, buffer); */
-		}
-		printf("stash1:%s\n", stash);
+		line_break++;
+		/* printf("\nline_break: %s\n", newline); */
+		tmp = ft_strjoin(tmp, buffer - *line_break);
+		printf("buffer - *line_break:%s\n", line_break - *buffer);
+		stash = line_break;
+		printf("tmp2:%s\n", tmp);
+		printf("stash:%s\n", stash);
+		return (tmp);
 	}
-	printf("newline:%s\n", newline);
+	else
+	{
+		while (line_break == NULL)
+		{	
+			if (byte_count == 0)
+			{
+				stash = ft_strjoin(stash, buffer);
+				free(buffer);
+				free(tmp);
+				return (stash);
+			}
+			line_break = ft_strchr(buffer, '\n');
+			if (line_break == NULL)
+			{
+				stash = ft_strjoin(stash, buffer);
+			}
+			else
+			{
+				// TODO: Add to stash only until the line break
+				stash = ft_strjoin(stash, buffer - (*line_break + 1));
+				if(ft_strchr(stash, '\n') == NULL)
+					return (stash);
+				else
+				{
+					tmp = ft_strjoin(tmp, line_break + 1); //save it to stash
+					ft_strjoin(stash, tmp);
+					return (tmp);
+				}
+				//TODO: need to check if there's any \n in stash already
+				/* stash = ft_strjoin(stash, buffer); */
+			}
+			byte_count = read(fd, buffer, BUFFER_SIZE);
+		}
+	}
 	printf("stash2:%s\n", stash);
 	free (buffer);
 	return (stash);

@@ -10,7 +10,7 @@ int main(void)
 
 	count = 0;
 	fd = open("test.txt", O_RDONLY);
-	while (1)
+	while (count < 7)
 	{
 		next_line = get_next_line(fd);
 		if (next_line == NULL)

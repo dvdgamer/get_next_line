@@ -82,3 +82,43 @@ char    *ft_strjoin(char const *s1, char const *s2)
         return (return_string);
 }
 
+size_t  ft_strlcpy(char *dest, const char *src, size_t n)
+{
+	size_t  i;
+
+	i = 0;
+	if (n)
+	{
+		while (i < n - 1 && src[i] != '\0')
+		{
+			dest[i] = src[i];
+			i++;
+		}
+		dest[i] = '\0';
+	}
+	while (src[i] != '\0')
+		i++;
+	return (i);
+}
+
+char    *ft_substr(char const *s, unsigned int start, size_t len)
+{
+        size_t  i;
+        size_t  s_len;
+        char    *substr;
+
+        s_len = ft_strlen(s);
+        if (!s)
+                return (NULL);
+        if (start >= ft_strlen(s))
+                return (ft_strdup(""));
+        if (len > s_len - start)
+                len = s_len - start;
+        substr = malloc(len + 1);
+        if (!substr)
+                return (NULL);
+        i = 0;
+        ft_strlcpy(substr, &s[start + i], len + 1);
+        return (substr);
+}
+

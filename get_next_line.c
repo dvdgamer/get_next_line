@@ -6,11 +6,13 @@
 /*   By: dponte <dponte@student.codam.nl>            +#+                      */
 /*                                                  +#+                       */
 /*   Created: 2025/07/01 14:31:50 by dponte       #+#    #+#                  */
-/*   Updated: 2025/07/05 12:33:19 by dponte       ########   odam.nl          */
+/*   Updated: 2025/07/05 12:44:30 by dponte       ########   odam.nl          */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdlib.h>
+#include <string.h>
 
 char	*ft_strchr(const char *str, int c)
 {
@@ -81,6 +83,12 @@ char	*get_next_line(int fd)
 	while (line_break == NULL)
 	{
 		byte_count = read(fd, buffer, BUFFER_SIZE);
+		if (byte_count == 0)
+		{
+			free (stash);
+			free(buffer);
+			return (NULL);
+		}
 		stash = ft_strjoin(stash, buffer);
 		line_break = ft_strchr(stash, '\n');
 	}

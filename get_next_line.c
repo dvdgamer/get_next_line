@@ -6,15 +6,46 @@
 /*   By: dponte <dponte@student.codam.nl>            +#+                      */
 /*                                                  +#+                       */
 /*   Created: 2025/07/01 14:31:50 by dponte       #+#    #+#                  */
-/*   Updated: 2025/07/01 16:15:30 by dponte       ########   odam.nl          */
+/*   Updated: 2025/07/05 12:33:19 by dponte       ########   odam.nl          */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include "get_next_line.h"
+
+char	*ft_strchr(const char *str, int c)
+{
+	unsigned char	ch;
+
+	ch = (unsigned char)c;
+	while (*str != ch)
+	{
+		if (*str == '\0')
+			return (NULL);
+		str++;
+	}
+	return ((char *) str);
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	unsigned char	*ptr;
+	size_t			total_size;
+	size_t			i;
+
+	if (size && count > SIZE_MAX / size)
+		return (NULL);
+	total_size = count * size;
+	ptr = malloc(total_size);
+	if (!ptr)
+		return (NULL);
+	i = 0;
+	while (i < total_size)
+	{
+		ptr[i] = 0;
+		i++;
+	}
+	return (ptr);
+}
 
 char	*get_result(char **stash, char *line_break)
 {
@@ -35,7 +66,7 @@ char	*get_next_line(int fd)
 	static char	*stash = NULL;
 	size_t		byte_count;
 
-	buffer = calloc(BUFFER_SIZE, sizeof(char));
+	buffer = ft_calloc(BUFFER_SIZE, sizeof(char));
 	line_break = NULL;
 	if (stash == NULL)
 		stash = ft_strdup("");

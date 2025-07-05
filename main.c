@@ -10,14 +10,15 @@ int main(void)
 
 	count = 1;
 	fd = open("test.txt", O_RDONLY);
-	while (count < 9)
+	/* while (count < 10) */
+	while (1)
 	{
 		next_line = get_next_line(fd);
 		if (next_line == NULL)
 			break ;
-		count++;
 		printf("\n------------------------\n");
 		printf("[%d]:%s\n", count, next_line);
+		count++;
 		next_line = NULL;
 	}
 	next_line = NULL;

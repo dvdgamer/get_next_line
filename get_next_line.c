@@ -5,8 +5,8 @@
 /*                                                    +:+                     */
 /*   By: dponte <dponte@student.codam.nl>            +#+                      */
 /*                                                  +#+                       */
-/*   Created: 2025/06/08 16:07:35 by dponte       #+#    #+#                  */
-/*   Updated: 2025/06/10 18:37:37 by dponte       ########   odam.nl          */
+/*   Created: 2025/07/01 14:31:50 by dponte       #+#    #+#                  */
+/*   Updated: 2025/07/01 16:15:30 by dponte       ########   odam.nl          */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,79 +16,53 @@
 #include <unistd.h>
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
+char *get_result(char **stash, char *buffer, char *line_break)
+{
+	size_t		len;
+	char		*result;
+	char		*tmp;
+
+	len = (line_break + 1) - buffer;
+	tmp = ft_substr(buffer, 0, len);
+	result = ft_strjoin(*stash, tmp);
+	*stash = ft_strdup(line_break + 1);
+	return (result);
+}
+
+char *get_next_line(int fd)
 {
 	char		*buffer;
-	char		*line_break;
 	char		*result;
-	static char	*stash;
-	size_t 		len;
-	char		*tmp;
+	char		*line_break;
+	int			len;
+	static char *stash = NULL;
 	size_t		byte_count;
-
-	buffer = calloc(BUFFER_SIZE + 1, sizeof(char));
+	
+	buffer = calloc(BUFFER_SIZE, sizeof(char));
+	line_break = NULL;
 
 	if (stash == NULL)
 		stash = ft_strdup("");
-
-	line_break = ft_strchr(stash, '\n');
-	if (line_break)
-	{
-		len = (line_break + 1) - stash;
-		tmp = ft_substr(stash, 0, len);
-		stash = ft_strdup(line_break + 1);
-		return (tmp);
-	}
-
-	//TODO: Add null check
-
-	/* printf("stash before buffer is read:%s\n",stash); */
-	byte_count = read(fd, buffer, BUFFER_SIZE);
-	/* printf("Original buffer:%s\n", buffer); */
-	if (byte_count < BUFFER_SIZE)
-	{
-		stash = ft_strjoin(stash, buffer);
-		return (stash);
-	}
-
-	line_break = ft_strchr(buffer, '\n');
-
-	if (line_break)
-	{
-		len = (line_break + 1) - buffer;
-		tmp = ft_substr(buffer, 0, len);
-		result = ft_strjoin(stash, tmp);
-		free(tmp);
-		stash = ft_strdup(line_break + 1);
-		return (result);
-	}
 	else
 	{
-		while (line_break == NULL && byte_count == BUFFER_SIZE)
-		{	
-			stash = ft_strjoin(stash, buffer);
-			free(buffer);
-			byte_count = read(fd, buffer, BUFFER_SIZE);
-			if (byte_count <= 0)
-			{
-				stash = ft_strjoin(stash, buffer);
-				return stash;
-			};
-			line_break = ft_strchr(buffer, '\n');
+		if (ft_strchr(stash, '\n'))
+		{
+			line_break = ft_strchr(stash, '\n');
+			len = (line_break + 1) - stash;
+			result = ft_substr(stash, 0, len);
+			stash = ft_strdup(line_break + 1);
+			printf("stash:%s\n", stash);
+			return (result);
 		}
-		
-		// If there's a line break
-		len = (line_break + 1) - buffer;
-		tmp = ft_substr(buffer, 0, len);
-		result = ft_strjoin(stash, tmp);
-		stash = ft_strdup(line_break + 1);
-		return (result);
 	}
-	free (buffer);
-	if (stash)
-	{
-		free(stash);
-		stash = NULL;
+
+	while (line_break == NULL)
+	{ // ft_read_and_add_to_stash()
+		byte_count = read(fd, buffer, BUFFER_SIZE);
+		line_break = ft_strchr(buffer, '\n');
+		stash = ft_strjoin(stash, buffer);
 	}
-	return (stash);
+	// Once it finds the \n
+	return (get_result(&stash, buffer, line_break));
 }
+

@@ -6,7 +6,7 @@
 /*   By: dponte <dponte@student.codam.nl>            +#+                      */
 /*                                                  +#+                       */
 /*   Created: 2025/07/01 14:31:50 by dponte       #+#    #+#                  */
-/*   Updated: 2025/07/05 12:44:30 by dponte       ########   odam.nl          */
+/*   Updated: 2025/07/05 13:03:50 by dponte       ########   odam.nl          */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ char	*get_result(char **stash, char *line_break)
 char	*get_next_line(int fd)
 {
 	char		*buffer;
-	char		*result;
 	char		*line_break;
 	static char	*stash = NULL;
 	size_t		byte_count;

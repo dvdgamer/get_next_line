@@ -55,13 +55,20 @@ char	*get_result(char **stash, char *line_break)
 {
 	size_t		len;
 	char		*result;
-	char		*old_stash;
+	char		*new_stash;
 
 	len = (line_break + 1) - *stash;
 	result = ft_substr(*stash, 0, len);
-	old_stash = *stash;
-	*stash = ft_strdup(line_break + 1);
-	free (old_stash);
+	if (result == NULL)
+		return (NULL);
+	new_stash = ft_strdup(line_break + 1);
+	if (new_stash == NULL)
+	{
+		free (result);
+		return (NULL);
+	}
+	free (*stash);
+	*stash = new_stash;
 	return (result);
 }
 
@@ -94,21 +101,22 @@ char	*get_next_line(int fd)
 		byte_count = read(fd, buffer, BUFFER_SIZE);
 		if (byte_count == 0)
 		{
+			free (buffer);
 			if (stash && *stash)
 			{
 				tmp = ft_strdup(stash);
 				free (stash);
 				stash = NULL;
-				free (buffer);
 				return (tmp);
 			}
 			free (stash);
-			free (buffer);
+			stash = NULL;
 			return (NULL);
 		}
 		if (byte_count == -1)
 		{
 			free (stash);
+			stash = NULL;
 			free (buffer);
 			return (NULL);
 		}
@@ -116,6 +124,8 @@ char	*get_next_line(int fd)
 		stash = ft_strjoin(tmp, buffer);
 		free(tmp);
 		free(buffer);
+		if (stash == NULL)
+			return (NULL);
 		line_break = ft_strchr(stash, '\n');
 	}
 	return (get_result(&stash, line_break));

@@ -11,8 +11,10 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 
 char	*ft_strchr(const char *str, int c)
 {
@@ -53,21 +55,26 @@ char	*get_result(char **stash, char *line_break)
 {
 	size_t		len;
 	char		*result;
+	char		*old_stash;
 
 	len = (line_break + 1) - *stash;
 	result = ft_substr(*stash, 0, len);
+	old_stash = *stash;
 	*stash = ft_strdup(line_break + 1);
+	free (old_stash);
 	return (result);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buffer;
-	char		*line_break;
-	static char	*stash = NULL;
-	size_t		byte_count;
+	char			*buffer;
+	char			*line_break;
+	char			*tmp;
+	static char		*stash = NULL;
+	ssize_t			byte_count;
 
-	buffer = ft_calloc(BUFFER_SIZE, sizeof(char));
+	if (fd < 0 || fd > MAX_FD || BUFFER_SIZE <= 0)
+		return (free (stash), stash = NULL, NULL);
 	line_break = NULL;
 	if (stash == NULL)
 		stash = ft_strdup("");
@@ -81,14 +88,34 @@ char	*get_next_line(int fd)
 	}
 	while (line_break == NULL)
 	{
+		buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		if (buffer == NULL)
+			return (NULL);
 		byte_count = read(fd, buffer, BUFFER_SIZE);
 		if (byte_count == 0)
 		{
+			if (stash && *stash)
+			{
+				tmp = ft_strdup(stash);
+				free (stash);
+				stash = NULL;
+				free (buffer);
+				return (tmp);
+			}
 			free (stash);
-			free(buffer);
+			free (buffer);
 			return (NULL);
 		}
-		stash = ft_strjoin(stash, buffer);
+		if (byte_count == -1)
+		{
+			free (stash);
+			free (buffer);
+			return (NULL);
+		}
+		tmp = stash;
+		stash = ft_strjoin(tmp, buffer);
+		free(tmp);
+		free(buffer);
 		line_break = ft_strchr(stash, '\n');
 	}
 	return (get_result(&stash, line_break));

@@ -19,8 +19,10 @@ int main(void)
 		printf("\n------------------------\n");
 		printf("[%d]:%s\n", count, next_line);
 		count++;
+		free (next_line);
 		next_line = NULL;
 	}
+	free (next_line);
 	next_line = NULL;
 
 	close(fd);

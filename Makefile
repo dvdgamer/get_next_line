@@ -8,6 +8,7 @@ NAME = get_next_line.a
 FLAGS = -Wall -Wextra -Werror
 CC = cc
 
+SRC = get_next_line.c get_next_line_utils.c
 OBJS = $(SRC:.c=.o)
 
 .PHONY: all clean fclean re
@@ -15,9 +16,9 @@ OBJS = $(SRC:.c=.o)
 all: $(NAME)
 
 %.o: %.c get_next_line.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(FLAGS) -c $< -o $@
 
-$(NAME):$(OBJS)
+$(NAME): $(OBJS)
 	ar rcs $(NAME) $(OBJS)
 
 clean:

@@ -78,12 +78,12 @@ char	*read_and_add_line_to_stash(char **stash, int fd)
 			handle_eof(*&stash, tmp, buffer);
 		if (byte_count == -1)
 			return (free (*stash), free (buffer), *stash = NULL, NULL);
+		if (*stash == NULL)
+			return (NULL);
 		tmp = *stash;
 		*stash = ft_strjoin(tmp, buffer);
 		free(tmp);
 		free(buffer);
-		if (*stash == NULL)
-			return (NULL);
 	}
 	return (get_result(*&stash, ft_strchr(*stash, '\n')));
 }

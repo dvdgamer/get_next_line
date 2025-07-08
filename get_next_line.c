@@ -11,10 +11,6 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
 
 char	*ft_strchr(const char *str, int c)
 {
@@ -28,27 +24,6 @@ char	*ft_strchr(const char *str, int c)
 		str++;
 	}
 	return ((char *) str);
-}
-
-void	*ft_calloc(size_t count, size_t size)
-{
-	unsigned char	*ptr;
-	size_t			total_size;
-	size_t			i;
-
-	if (size && count > SIZE_MAX / size)
-		return (NULL);
-	total_size = count * size;
-	ptr = malloc(total_size);
-	if (!ptr)
-		return (NULL);
-	i = 0;
-	while (i < total_size)
-	{
-		ptr[i] = 0;
-		i++;
-	}
-	return (ptr);
 }
 
 char	*get_result(char **stash, char *line_break)
@@ -72,61 +47,60 @@ char	*get_result(char **stash, char *line_break)
 	return (result);
 }
 
-char	*get_next_line(int fd)
+char	*handle_eof(char **stash, char *tmp, char *buffer)
 {
-	char			*buffer;
-	char			*line_break;
-	char			*tmp;
-	static char		*stash = NULL;
-	ssize_t			byte_count;
-
-	if (fd < 0 || fd > MAX_FD || BUFFER_SIZE <= 0)
-		return (free (stash), stash = NULL, NULL);
-	line_break = NULL;
-	if (stash == NULL)
-		stash = ft_strdup("");
-	else
+	free (buffer);
+	if (*stash && **stash)
 	{
-		if (ft_strchr(stash, '\n') != NULL)
-		{
-			line_break = ft_strchr(stash, '\n');
-			return (get_result(&stash, line_break));
-		}
+		tmp = ft_strdup(*stash);
+		free (*stash);
+		*stash = NULL;
+		return (tmp);
 	}
-	while (line_break == NULL)
+	free (*stash);
+	*stash = NULL;
+	return (NULL);
+}
+
+char	*read_and_add_line_to_stash(char **stash, int fd)
+{
+	char		*tmp;
+	char		*buffer;
+	ssize_t		byte_count;
+
+	while (ft_strchr(*stash, '\n') == NULL)
 	{
 		buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 		if (buffer == NULL)
 			return (NULL);
 		byte_count = read(fd, buffer, BUFFER_SIZE);
 		if (byte_count == 0)
-		{
-			free (buffer);
-			if (stash && *stash)
-			{
-				tmp = ft_strdup(stash);
-				free (stash);
-				stash = NULL;
-				return (tmp);
-			}
-			free (stash);
-			stash = NULL;
-			return (NULL);
-		}
+			handle_eof(*&stash, tmp, buffer);
 		if (byte_count == -1)
-		{
-			free (stash);
-			stash = NULL;
-			free (buffer);
-			return (NULL);
-		}
-		tmp = stash;
-		stash = ft_strjoin(tmp, buffer);
+			return (free (*stash), free (buffer), *stash = NULL, NULL);
+		tmp = *stash;
+		*stash = ft_strjoin(tmp, buffer);
 		free(tmp);
 		free(buffer);
-		if (stash == NULL)
+		if (*stash == NULL)
 			return (NULL);
-		line_break = ft_strchr(stash, '\n');
 	}
-	return (get_result(&stash, line_break));
+	return (get_result(*&stash, ft_strchr(*stash, '\n')));
+}
+
+char	*get_next_line(int fd)
+{
+	static char		*stash = NULL;
+
+	if (fd < 0 || fd > MAX_FD || BUFFER_SIZE <= 0)
+	{
+		free (stash);
+		stash = NULL;
+		return (NULL);
+	}
+	if (stash == NULL)
+		stash = ft_strdup("");
+	if (stash != NULL && ft_strchr(stash, '\n') != NULL)
+		return (get_result(&stash, ft_strchr(stash, '\n')));
+	return (read_and_add_line_to_stash(&stash, fd));
 }

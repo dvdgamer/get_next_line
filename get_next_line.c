@@ -62,6 +62,8 @@ char	*handle_eof(char **stash, char *tmp, char *buffer)
 	return (NULL);
 }
 
+//TODO: Make buffer double size to minimize malloc calls
+
 char	*read_and_add_line_to_stash(char **stash, int fd)
 {
 	char		*tmp;

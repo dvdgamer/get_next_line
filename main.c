@@ -50,13 +50,10 @@ void test_all_files(void)
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
 			continue;
 
-		// Only test .txt files
-		int len = strlen(entry->d_name);
-		if (len > 4 && strcmp(entry->d_name + len - 4, ".txt") == 0)
-		{
-			snprintf(filepath, sizeof(filepath), "tests/%s", entry->d_name);
-			test_gnl(filepath);
-		}
+		// Create full path
+		snprintf(filepath, sizeof(filepath), "tests/%s", entry->d_name);
+		printf("%s\n", filepath);
+		test_gnl(filepath);
 	}
 	closedir(dir);
 }

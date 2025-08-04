@@ -62,7 +62,6 @@ char	*handle_eof(char **stash, char *tmp, char *buffer)
 	return (NULL);
 }
 
-//TODO: Make buffer double size to minimize malloc calls
 char	*read_and_add_line_to_stash(char **stash, int fd)
 {
 	char		*tmp;
@@ -80,7 +79,7 @@ char	*read_and_add_line_to_stash(char **stash, int fd)
 		if (byte_count == -1)
 			return (free (*stash), free (buffer), *stash = NULL, NULL);
 		if (*stash == NULL)
-			return (NULL);
+			return (free (buffer), NULL);
 		tmp = *stash;
 		*stash = ft_strjoin(tmp, buffer);
 		if (*stash == NULL)
@@ -102,7 +101,11 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	if (stash == NULL)
+	{
 		stash = ft_strdup("");
+		if (stash == NULL)
+			return (NULL);
+	}
 	if (stash != NULL && ft_strchr(stash, '\n') != NULL)
 		return (get_result(&stash, ft_strchr(stash, '\n')));
 	return (read_and_add_line_to_stash(&stash, fd));

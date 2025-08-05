@@ -49,7 +49,6 @@ void test_all_files(void)
 		// Skip . and .. directories
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
 			continue;
-
 		// Create full path
 		snprintf(filepath, sizeof(filepath), "tests/%s", entry->d_name);
 		printf("%s\n", filepath);

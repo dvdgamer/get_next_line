@@ -6,7 +6,7 @@
 /*   By: dponte <dponte@student.codam.nl>            +#+                      */
 /*                                                  +#+                       */
 /*   Created: 2025/07/01 14:31:50 by dponte       #+#    #+#                  */
-/*   Updated: 2025/07/05 13:03:50 by dponte       ########   odam.nl          */
+/*   Updated: 2025/08/05 16:54:06 by dponte       ########   odam.nl          */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ char	*handle_eof(char **stash, char *tmp, char *buffer)
 	return (NULL);
 }
 
+/* Reads into @buffer until it finds a line break */
+/* Always adds buffer to stash */
 char	*read_and_add_line_to_stash(char **stash, int fd)
 {
 	char		*tmp;

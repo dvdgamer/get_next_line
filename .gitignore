@@ -1,0 +1,13 @@
+big_line*
+
+tests
+
+*.a
+
+a.out
+
+main.c
+
+Makefile
+
+.gitignore

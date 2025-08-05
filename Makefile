@@ -10,8 +10,10 @@ CC = cc
 
 SRC = get_next_line.c get_next_line_utils.c
 OBJS = $(SRC:.c=.o)
+BONUS = *bonus.c
+BONUS_OBJS = $(BONUS:.c=.o)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus
 
 all: $(NAME)
 

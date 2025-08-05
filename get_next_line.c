@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdlib.h>
 
 char	*ft_strchr(const char *str, int c)
 {
@@ -68,11 +69,12 @@ char	*read_and_add_line_to_stash(char **stash, int fd)
 	char		*buffer;
 	ssize_t		byte_count;
 
+	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (buffer == NULL)
+		return (NULL);
 	while (ft_strchr(*stash, '\n') == NULL)
 	{
-		buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-		if (buffer == NULL)
-			return (NULL);
+		ft_memset(buffer, 0, BUFFER_SIZE + 1);
 		byte_count = read(fd, buffer, BUFFER_SIZE);
 		if (byte_count == 0)
 			return (handle_eof(stash, tmp, buffer));
@@ -85,8 +87,8 @@ char	*read_and_add_line_to_stash(char **stash, int fd)
 		if (*stash == NULL)
 			return (free(tmp), free(buffer), NULL);
 		free(tmp);
-		free(buffer);
 	}
+	free(buffer);
 	return (get_result(stash, ft_strchr(*stash, '\n')));
 }
 

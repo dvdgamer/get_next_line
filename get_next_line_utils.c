@@ -42,27 +42,6 @@ char	*ft_strdup(const char *s)
 	return (returned_str);
 }
 
-void	*ft_calloc(size_t count, size_t size)
-{
-	unsigned char	*ptr;
-	size_t			total_size;
-	size_t			i;
-
-	if (size && count > SIZE_MAX / size)
-		return (NULL);
-	total_size = count * size;
-	ptr = malloc(total_size);
-	if (!ptr)
-		return (NULL);
-	i = 0;
-	while (i < total_size)
-	{
-		ptr[i] = 0;
-		i++;
-	}
-	return (ptr);
-}
-
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	size_t	i;
@@ -87,6 +66,18 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	}
 	return_string[ft_strlen(s1) + i] = '\0';
 	return (return_string);
+}
+
+void	*ft_memset(void *s, int c, size_t n)
+{
+	unsigned char	*ptr;
+	unsigned char	byte;
+
+	ptr = (unsigned char *)s;
+	byte = (unsigned char)c;
+	while (n--)
+		*ptr++ = byte;
+	return (s);
 }
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)

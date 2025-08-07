@@ -1,0 +1,116 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                       ::::::::             */
+/*   get_next_line_bonus.c                             :+:    :+:             */
+/*                                                    +:+                     */
+/*   By: dponte <dponte@student.codam.nl>            +#+                      */
+/*                                                  +#+                       */
+/*   Created: 2025/08/07 11:38:37 by dponte       #+#    #+#                  */
+/*   Updated: 2025/08/07 11:57:56 by dponte       ########   odam.nl          */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "get_next_line_bonus.h"
+#include <stdlib.h>
+
+char	*ft_strchr(const char *str, int c)
+{
+	unsigned char	ch;
+
+	ch = (unsigned char)c;
+	while (*str != ch)
+	{
+		if (*str == '\0')
+			return (NULL);
+		str++;
+	}
+	return ((char *) str);
+}
+
+char	*get_result(char **stash, char *line_break)
+{
+	size_t		len;
+	char		*result;
+	char		*new_stash;
+
+	len = (line_break + 1) - *stash;
+	result = ft_substr(*stash, 0, len);
+	if (result == NULL)
+		return (NULL);
+	new_stash = ft_strdup(line_break + 1);
+	if (new_stash == NULL)
+	{
+		free (result);
+		return (NULL);
+	}
+	free (*stash);
+	*stash = new_stash;
+	return (result);
+}
+
+char	*handle_eof(char **stash, char *tmp, char *buffer)
+{
+	free (buffer);
+	if (*stash && **stash)
+	{
+		tmp = ft_strdup(*stash);
+		free (*stash);
+		*stash = NULL;
+		return (tmp);
+	}
+	free (*stash);
+	*stash = NULL;
+	return (NULL);
+}
+
+/* Reads into @buffer until it finds a line break */
+/* Always adds buffer to stash */
+char	*read_and_add_line_to_stash(char **stash, int fd)
+{
+	char		*tmp;
+	char		*buffer;
+	ssize_t		byte_count;
+
+	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (buffer == NULL)
+		return (NULL);
+	while (ft_strchr(*stash, '\n') == NULL)
+	{
+		ft_memset(buffer, 0, BUFFER_SIZE + 1);
+		byte_count = read(fd, buffer, BUFFER_SIZE);
+		if (byte_count == 0)
+			return (handle_eof(stash, tmp, buffer));
+		if (byte_count == -1)
+			return (free (*stash), free (buffer), *stash = NULL, NULL);
+		if (*stash == NULL)
+			return (free (buffer), NULL);
+		tmp = *stash;
+		*stash = ft_strjoin(tmp, buffer);
+		if (*stash == NULL)
+			return (free(tmp), free(buffer), NULL);
+		free(tmp);
+	}
+	free(buffer);
+	return (get_result(stash, ft_strchr(*stash, '\n')));
+}
+
+char	*get_next_line_bonus(int fd)
+{
+	static char		*stash[MAX_FD];
+
+	if (fd < 0 || fd > MAX_FD || BUFFER_SIZE <= 0)
+	{
+		free (stash[fd]);
+		stash[fd] = NULL;
+		return (NULL);
+	}
+	if (stash[fd] == NULL)
+	{
+		stash[fd] = ft_strdup("");
+		if (stash[fd] == NULL)
+			return (NULL);
+	}
+	if (stash[fd] != NULL && ft_strchr(stash[fd], '\n') != NULL)
+		return (get_result(&stash[fd], ft_strchr(stash[fd], '\n')));
+	return (read_and_add_line_to_stash(&stash[fd], fd));
+}
